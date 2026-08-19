@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
+import { MAX_WRONG_GUESSES } from "@/lib/game";
 
 type Guess = {
   value: number;
@@ -14,12 +15,14 @@ export function PlayScreen({
   min,
   max,
   onWin,
+  onLose,
 }: {
   name: string;
   target: number;
   min: number;
   max: number;
   onWin: (attempts: number) => void;
+  onLose: () => void;
 }) {
   const [current, setCurrent] = useState("");
   const [guesses, setGuesses] = useState<Guess[]>([]);
@@ -55,13 +58,18 @@ export function PlayScreen({
     }
 
     const result: Guess["result"] = value < target ? "low" : "high";
-    setGuesses((prev) => [{ value, result }, ...prev]);
+    const nextGuesses = [{ value, result }, ...guesses];
+    setGuesses(nextGuesses);
     setBounds((prev) => ({
       low: result === "low" ? Math.max(prev.low, value + 1) : prev.low,
       high: result === "high" ? Math.min(prev.high, value - 1) : prev.high,
     }));
     setCurrent("");
     triggerShake();
+
+    if (nextGuesses.length >= MAX_WRONG_GUESSES) {
+      onLose();
+    }
   }
 
   function triggerShake() {

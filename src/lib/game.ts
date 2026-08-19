@@ -9,6 +9,8 @@ export const DIFFICULTIES: Record<
   hard: { label: "Hard", min: 1, max: 500, description: "1 – 500" },
 };
 
+export const MAX_WRONG_GUESSES = 5;
+
 export function randomInRange(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
